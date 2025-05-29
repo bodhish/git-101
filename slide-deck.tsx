@@ -392,7 +392,13 @@ export default function SlideDeck() {
     }
   }
 
-  const renderIcon = (icon: any, className = "w-6 h-6") => {
+  const renderIcon = (
+    icon: React.ComponentType<{ className?: string }> | string | undefined, 
+    className = "w-6 h-6"
+  ) => {
+    if (!icon) {
+      return null;
+    }
     if (typeof icon === "string") {
       return <span className="text-2xl">{icon}</span>
     }
@@ -532,25 +538,32 @@ export default function SlideDeck() {
               <div className="absolute left-8 top-16 bottom-16 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 rounded-full"></div>
 
               <div className="space-y-6">
-                {slide.steps?.map((step, index) => (
-                  <div key={index} className="relative flex items-center space-x-6">
-                    <div
-                      className={`relative z-10 bg-gradient-to-r ${step.color} text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl shadow-lg`}
-                    >
-                      {index + 1}
-                    </div>
-
-                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6">
-                      <div className="flex items-center space-x-4 mb-2">
-                        <div className="bg-slate-100 p-2 rounded-lg">
-                          {renderIcon(step.icon, "w-6 h-6 text-slate-700")}
-                        </div>
-                        <span className="text-2xl font-semibold text-slate-800">{step.text}</span>
+                {slide.steps?.map((step, index) => {
+                  // Determine the color to use
+                  const colorClass = "color" in step ? step.color : "from-blue-500 to-blue-600";
+                  // Determine the detail text to show
+                  const detailText = "detail" in step ? step.detail : "";
+                  
+                  return (
+                    <div key={index} className="relative flex items-center space-x-6">
+                      <div
+                        className={`relative z-10 bg-gradient-to-r ${colorClass} text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl shadow-lg`}
+                      >
+                        {index + 1}
                       </div>
-                      <p className="text-lg text-slate-600 ml-12">{step.detail}</p>
+
+                      <div className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6">
+                        <div className="flex items-center space-x-4 mb-2">
+                          <div className="bg-slate-100 p-2 rounded-lg">
+                            {renderIcon(step.icon, "w-6 h-6 text-slate-700")}
+                          </div>
+                          <span className="text-2xl font-semibold text-slate-800">{step.text}</span>
+                        </div>
+                        <p className="text-lg text-slate-600 ml-12">{detailText}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -737,7 +750,7 @@ export default function SlideDeck() {
                   className="relative w-full object-cover rounded-3xl border"
                 />
                 <div className="absolute inset-0 rounded-3xl">
-                  <div className="absolute bottom-36 mt-4 p-8 space-y-4">
+                  <div className="absolute bottom-0 mt-4 p-8 space-y-4">
                     
                       {slide.features?.map((feature, index) => (
                         <div
@@ -969,7 +982,7 @@ export default function SlideDeck() {
               {slide.contact && (
                 <div className="space-y-6">
                   <p className="text-2xl text-slate-600 font-semibold">
-                    Let's connect and keep the conversation going:
+                    Let&apos;s connect and keep the conversation going:
                   </p>
                   <div className="flex justify-center space-x-8">
                     <div className="group flex items-center space-x-4 bg-white p-6 rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
@@ -990,7 +1003,7 @@ export default function SlideDeck() {
                   <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl border border-blue-200 max-w-2xl mx-auto">
                     <p className="text-lg text-slate-700">
                       <strong>Remember:</strong> The best way to learn Git is by doing. Start small, be consistent, and
-                      don't be afraid to make mistakes!
+                      don&apos;t be afraid to make mistakes!
                     </p>
                   </div>
                 </div>

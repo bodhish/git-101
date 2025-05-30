@@ -18,7 +18,6 @@ import {
   CheckCircle,
   AlertTriangle,
   ExternalLink,
-  Star,
   Clock,
   Target,
   Lightbulb,
@@ -896,58 +895,68 @@ export default function SlideDeck() {
             </div>
 
             <div className="space-y-6">
-              {slide.steps?.map((step, index) => (
-                <div
-                  key={index}
-                  className={`group relative overflow-hidden rounded-3xl border-2 transition-all duration-500 hover:scale-[1.02] ${
-                    step.priority === "high"
-                      ? "bg-gradient-to-r from-green-50 to-blue-50 border-green-300 hover:border-green-400 hover:shadow-xl"
-                      : "bg-gradient-to-r from-slate-50 to-blue-50 border-slate-300 hover:border-blue-400 hover:shadow-lg"
-                  }`}
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16"></div>
+              {slide.steps?.map((step, index) => {
+                // Determine styling based on properties
+                const isPriorityHigh = "priority" in step && step.priority === "high";
+                const priorityClass = isPriorityHigh
+                  ? "bg-gradient-to-r from-green-50 to-blue-50 border-green-300 hover:border-green-400 hover:shadow-xl"
+                  : "bg-gradient-to-r from-slate-50 to-blue-50 border-slate-300 hover:border-blue-400 hover:shadow-lg";
+                
+                const bgClass = isPriorityHigh
+                  ? "bg-gradient-to-br from-green-500 to-green-600"
+                  : "bg-gradient-to-br from-blue-500 to-blue-600";
+                
+                // Get difficulty class if it exists
+                let difficultyClass = "bg-green-100 text-green-700"; // Default to easy
+                if ("difficulty" in step) {
+                  if (step.difficulty === "medium") {
+                    difficultyClass = "bg-yellow-100 text-yellow-700";
+                  } else if (step.difficulty === "hard") {
+                    difficultyClass = "bg-red-100 text-red-700";
+                  }
+                }
+                
+                return (
+                  <div
+                    key={index}
+                    className={`group relative overflow-hidden rounded-3xl border-2 transition-all duration-500 hover:scale-[1.02] ${priorityClass}`}
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16"></div>
 
-                  <div className="relative flex items-center space-x-6 p-8">
-                    <div
-                      className={`p-6 rounded-2xl shadow-lg ${
-                        step.priority === "high"
-                          ? "bg-gradient-to-br from-green-500 to-green-600"
-                          : "bg-gradient-to-br from-blue-500 to-blue-600"
-                      }`}
-                    >
-                      {renderIcon(step.icon, "w-10 h-10 text-white")}
-                    </div>
+                    <div className="relative flex items-center space-x-6 p-8">
+                      <div
+                        className={`p-6 rounded-2xl shadow-lg ${bgClass}`}
+                      >
+                        {renderIcon(step.icon, "w-10 h-10 text-white")}
+                      </div>
 
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center space-x-4">
-                        <span className="text-3xl font-semibold text-slate-800">{step.text}</span>
-                        {step.priority === "high" && (
-                          <span className="bg-green-200 text-green-800 px-4 py-2 rounded-full text-sm font-bold">
-                            HIGH PRIORITY
-                          </span>
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center space-x-4">
+                          <span className="text-3xl font-semibold text-slate-800">{step.text}</span>
+                          {isPriorityHigh && (
+                            <span className="bg-green-200 text-green-800 px-4 py-2 rounded-full text-sm font-bold">
+                              HIGH PRIORITY
+                            </span>
+                          )}
+                        </div>
+                        {"difficulty" in step && (
+                          <div className="flex items-center space-x-4">
+                            <span
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${difficultyClass}`}
+                            >
+                              {step.difficulty.toUpperCase()} DIFFICULTY
+                            </span>
+                          </div>
                         )}
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            step.difficulty === "easy"
-                              ? "bg-green-100 text-green-700"
-                              : step.difficulty === "medium"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {step.difficulty?.toUpperCase()} DIFFICULTY
-                        </span>
+
+                      <div className="text-6xl font-bold text-slate-200 group-hover:text-slate-300 transition-colors">
+                        {String(index + 1).padStart(2, "0")}
                       </div>
                     </div>
-
-                    <div className="text-6xl font-bold text-slate-200 group-hover:text-slate-300 transition-colors">
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )
